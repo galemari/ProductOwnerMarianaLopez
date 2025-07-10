@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronograma MVP ECOMOVE</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin-bottom: 0;
+        }
+        
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 50px;
+            position: relative;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 4px;
+            background: linear-gradient(90deg, #e74c3c, #f39c12, #27ae60);
+            z-index: 1;
+        }
+        
+        .month {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .month-header {
+            background: white;
+            border: 4px solid;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: white;
+        }
+        
+        .month1 .month-header {
+            border-color: #e74c3c;
+            background: #e74c3c;
+        }
+        
+        .month2 .month-header {
+            border-color: #f39c12;
+            background: #f39c12;
+        }
+        
+        .month3 .month-header {
+            border-color: #27ae60;
+            background: #27ae60;
+        }
+        
+        .month-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .month-content {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid;
+            margin-top: 20px;
+        }
+        
+        .month1 .month-content {
+            border-left-color: #e74c3c;
+        }
+        
+        .month2 .month-content {
+            border-left-color: #f39c12;
+        }
+        
+        .month3 .month-content {
+            border-left-color: #27ae60;
+        }
+        
+        .week {
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+        
+        .week strong {
+            color: #2c3e50;
+        }
+        
+        .effort-section {
+            margin-top: 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .effort-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-top: 5px solid;
+        }
+        
+        .effort-card.viaje {
+            border-top-color: #3498db;
+        }
+        
+        .effort-card.experiencia {
+            border-top-color: #9b59b6;
+        }
+        
+        .effort-card.programa {
+            border-top-color: #e67e22;
+        }
+        
+        .effort-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .effort-percentage {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .viaje .effort-percentage {
+            color: #3498db;
+        }
+        
+        .experiencia .effort-percentage {
+            color: #9b59b6;
+        }
+        
+        .programa .effort-percentage {
+            color: #e67e22;
+        }
+        
+        .effort-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .effort-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+            color: #7f8c8d;
+        }
+        
+        .effort-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .hitos {
+            margin-top: 50px;
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+        }
+        
+        .hitos h3 {
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            text-align: center;
+        }
+        
+        .hitos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .hito {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .hito strong {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .objetivo {
+            margin-top: 30px;
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .objetivo h4 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .mvp-tag {
+            background: #27ae60;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Dimensionando - Cuánto Proyectamos dar</h1>
+            <p>Cronograma MVP ECOMOVE - Grupo 6</p>
+            <div class="mvp-tag">Todo pensado para el MVP</div>
+        </div>
+        
+        <div class="timeline">
+            <div class="month month1">
+                <div class="month-header">MES 1</div>
+                <div class="month-title">Fundación Técnica</div>
+                <div class="month-content">
+                    <div class="week">
+                        <strong>Semana 1-2:</strong> Configuración de arquitectura base y APIs de transporte público
+                    </div>
+                    <div class="week">
+                        <strong>Semana 3-4:</strong> Desarrollo de funcionalidades core (búsqueda de rutas, integración básica)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="month month2">
+                <div class="month-header">MES 2</div>
+                <div class="month-title">Integración y Desarrollo</div>
+                <div class="month-content">
+                    <div class="week">
+                        <strong>Semana 5-6:</strong> Integración con 2 operadores de micro-movilidad (bicicletas/scooters)
+                    </div>
+                    <div class="week">
+                        <strong>Semana 7-8:</strong> Desarrollo del sistema de pago unificado y calculadora de CO2
+                    </div>
+                </div>
+            </div>
+            
+            <div class="month month3">
+                <div class="month-header">MES 3</div>
+                <div class="month-title">Testing y Lanzamiento</div>
+                <div class="month-content">
+                    <div class="week">
+                        <strong>Semana 9-10:</strong> Testing exhaustivo, ajustes de UX y optimización de performance
+                    </div>
+                    <div class="week">
+                        <strong>Semana 11-12:</strong> Lanzamiento piloto con 100 usuarios beta en ciudad seleccionada
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="effort-section">
+            <div class="effort-card viaje">
+                <h3>Gestión de Viaje</h3>
+                <div class="effort-percentage">40%</div>
+                <ul class="effort-list">
+                    <li>Algoritmo de ruteo multimodal</li>
+                    <li>Integración con APIs de transporte público</li>
+                    <li>Interfaz de búsqueda y selección</li>
+                </ul>
+            </div>
+            
+            <div class="effort-card experiencia">
+                <h3>Gestión de Experiencia</h3>
+                <div class="effort-percentage">35%</div>
+                <ul class="effort-list">
+                    <li>Diseño UX/UI optimizado para móvil</li>
+                    <li>Flujo de usuario intuitivo</li>
+                    <li>Métricas de impacto ambiental</li>
+                </ul>
+            </div>
+            
+            <div class="effort-card programa">
+                <h3>Gestión de Programa</h3>
+                <div class="effort-percentage">25%</div>
+                <ul class="effort-list">
+                    <li>Coordinación con operadores locales</li>
+                    <li>Validación legal y regulatoria</li>
+                    <li>Testing con usuarios reales</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="hitos">
+            <h3>🎯 Hitos Clave del MVP</h3>
+            <div class="hitos-grid">
+                <div class="hito">
+                    <strong>Mes 1:</strong>
+                    Prototipo funcional con transporte público básico
+                </div>
+                <div class="hito">
+                    <strong>Mes 2:</strong>
+                    Integración completa con 3 tipos de transporte
+                </div>
+                <div class="hito">
+                    <strong>Mes 3:</strong>
+                    Aplicación lista para usuarios beta con métricas de impacto
+                </div>
+            </div>
+            
+            <div class="objetivo">
+                <h4>🚀 Objetivo del MVP</h4>
+                <p>Validar la hipótesis de que los usuarios adoptarán una plataforma unificada para movilidad sostenible, con métricas objetivo de <strong>70% de retención semanal</strong> y <strong>4.0+ rating de satisfacción</strong>.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

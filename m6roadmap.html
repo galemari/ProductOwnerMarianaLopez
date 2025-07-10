@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoMove - Roadmap y Storytelling Visual</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+        
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            font-weight: 600;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+        
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(255,255,255,0.25);
+            border-color: rgba(255,255,255,0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .section {
+            display: none;
+            background: rgba(255,255,255,0.95);
+            border-radius: 25px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            backdrop-filter: blur(15px);
+            animation: slideInUp 0.8s ease-out;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .section h2 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+        
+        /* Roadmap Styles */
+        .roadmap-container {
+            position: relative;
+            margin: 40px 0;
+        }
+        
+        .timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+            border-radius: 3px;
+        }
+        
+        .milestone {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+            animation: slideInFromSide 1s ease-out;
+        }
+        
+        .milestone.left {
+            left: 0;
+            animation-name: slideInLeft;
+        }
+        
+        .milestone.right {
+            left: 50%;
+            animation-name: slideInRight;
+        }
+        
+        .milestone::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            right: -17px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: 4px solid white;
+            top: 50%;
+            border-radius: 50%;
+            z-index: 1;
+            transform: translateY(-50%);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .milestone.right::after {
+            left: -16px;
+        }
+        
+        .milestone-content {
+            padding: 30px;
+            background: white;
+            position: relative;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .milestone-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+        
+        .milestone-number {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .milestone h3 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .milestone-phase {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        .milestone-details {
+            margin: 15px 0;
+        }
+        
+        .milestone-details ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .milestone-details li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .milestone-details li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .deliverable {
+            background: linear-gradient(135deg, #ffc107, #ff8f00);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+        
+        /* Storytelling Styles */
+        .story-container {
+            display: grid;
+            gap: 40px;
+            margin: 40px 0;
+        }
+        
+        .scene {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .scene:hover {
+            transform: translateY(-5px);
+        }
+        
+        .scene::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .scene-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .scene-icon {
+            font-size: 3rem;
+            margin-right: 20px;
+        }
+        
+        .scene-title {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .scene-period {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            margin-left: auto;
+        }
+        
+        .scene-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .scene-image {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            border: 2px dashed #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px;
+            font-style: italic;
+            color: #6c757d;
+        }
+        
+        .scene-data {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .scene-data h4 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .scene-data .metric {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .scene-narration {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-style: italic;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        /* Market Response Styles */
+        .market-response {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .response-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-top: 5px solid #667eea;
+            transition: transform 0.3s ease;
+        }
+        
+        .response-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .response-card h4 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .response-card .icon {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+        
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .metric-value {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .validation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        .validation-item {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .validation-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .validation-item .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .timeline::after {
+                left: 31px;
+            }
+            
+            .milestone {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            
+            .milestone.right {
+                left: 0%;
+            }
+            
+            .milestone::after {
+                left: 15px;
+            }
+            
+            .milestone.right::after {
+                left: 15px;
+            }
+            
+            .scene-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 EcoMove</h1>
+            <p class="subtitle">Roadmap de Desarrollo y Storytelling Visual</p>
+            <p style="opacity: 0.8; font-size: 1rem;">De la Validación a la Transformación Urbana</p>
+        </div>
+        
+        <div class="navigation">
+            <button class="nav-btn active" onclick="showSection('roadmap')">🗺️ Roadmap - 3 Hitos</button>
+            <button class="nav-btn" onclick="showSection('storytelling')">🎬 Storytelling Visual</button>
+            <button class="nav-btn" onclick="showSection('market')">📊 Respuesta al Mercado</button>
+        </div>
+        
+        <!-- Sección Roadmap -->
+        <div id="roadmap" class="section active">
+            <h2>🗺️ Roadmap de Desarrollo - 3 Hitos Claves</h2>
+            
+            <div class="roadmap-container">
+                <div class="timeline">
+                    <div class="milestone left">
+                        <div class="milestone-content">
+                            <div class="milestone-number">1</div>
+                            <div class="milestone-phase">FUNDACIÓN</div>
+                            <h3>"Validación y MVP"</h3>
+                            <p><strong>📅 Duración:</strong> 0 - 3 meses</p>
+                            
+                            <div class="milestone-details">
+                                <ul>
+                                    <li><strong>Mes 1:</strong> Investigación de mercado y validación con usuarios</li>
+                                    <li><strong>Mes 2:</strong> Desarrollo del MVP con funciones básicas (rutas, mapa)</li>
+                                    <li><strong>Mes 3:</strong> Testing beta con 500 usuarios en una zona específica</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="deliverable">
+                                <strong>📦 Entregable:</strong> App funcional básica con validación de mercado
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="milestone right">
+                        <div class="milestone-content">
+                            <div class="milestone-number">2</div>
+                            <div class="milestone-phase">CRECIMIENTO</div>
+                            <h3>"Lanzamiento y Tracción"</h3>
+                            <p><strong>📅 Duración:</strong> 3 - 6 meses</p>
+                            
+                            <div class="milestone-details">
+                                <ul>
+                                    <li><strong>Mes 4:</strong> Lanzamiento público en primera ciudad</li>
+                                    <li><strong>Mes 5:</strong> Integración con sistemas de transporte público</li>
+                                    <li><strong>Mes 6:</strong> Alcanzar 10,000 usuarios activos y métricas de retención</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="deliverable">
+                                <strong>📦 Entregable:</strong> Plataforma estable con usuarios reales y partnerships
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="milestone left">
+                        <div class="milestone-content">
+                            <div class="milestone-number">3</div>
+                            <div class="milestone-phase">EXPANSIÓN</div>
+                            <h3>"Escalabilidad y Sostenibilidad"</h3>
+                            <p><strong>📅 Duración:</strong> 6 - 12 meses</p>
+                            
+                            <div class="milestone-details">
+                                <ul>
+                                    <li><strong>Mes 7-9:</strong> Funciones avanzadas (IA, gamificación, comunidad)</li>
+                                    <li><strong>Mes 10-12:</strong> Expansión a 2 ciudades adicionales</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="deliverable">
+                                <strong>📦 Entregable:</strong> Ecosistema completo con 50,000+ usuarios y modelo de negocio validado
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección Storytelling -->
+        <div id="storytelling" class="section">
+            <h2>🎬 Storytelling Visual - La Historia de EcoMove</h2>
+            
+            <div class="story-container">
+                <div class="scene">
+                    <div class="scene-header">
+                        <div class="scene-icon">😤</div>
+                        <div class="scene-title">ESCENA 1: "El Problema"</div>
+                        <div class="scene-period">Mes 0</div>
+                    </div>
+                    
+                    <div class="scene-content">
+                        <div class="scene-image">
+                            <div>
+                                <strong>🚗 Imagen Visual:</strong><br>
+                                María frustrada en el tráfico, mirando su reloj con ansiedad mientras el tiempo pasa
+                            </div>
+                        </div>
+                        
+                        <div class="scene-data">
+                            <h4>📊 Data Impactante</h4>
+                            <div class="metric">2 HORAS</div>
+                            <p>perdidas diariamente</p>
+                            <div class="metric">$50K</div>
+                            <p>semanales en transporte</p>
+                            <div class="metric">60%</div>
+                            <p>de frustración por tráfico</p>
+                        </div>
+                    </div>
+                    
+                    <div class="scene-narration">
+                        💬 "María representa a millones de personas atrapadas en la movilidad urbana ineficiente"
+                    </div>
+                </div>
+                
+                <div class="scene">
+                    <div class="scene-header">
+                        <div class="scene-icon">💡</div>
+                        <div class="scene-title">ESCENA 2: "La Solución Nace"</div>
+                        <div class="scene-period">Meses 1-3</div>
+                    </div>
+                    
+                    <div class="scene-content">
+                        <div class="scene-image">
+                            <div>
+                                <strong>👩‍💻 Imagen Visual:</strong><br>
+                                Equipo desarrollando apasionadamente, usuarios testing la app con sonrisas de satisfacción
+                            </div>
+                        </div>
+                        
+                        <div class="scene-data">
+                            <h4>📊 Primeros Resultados</h4>
+                            <div class="metric">500</div>
+                            <p>beta testers entusiastas</p>
+                            <div class="metric">40%</div>
+                            <p>reducción tiempo de viaje</p>
+                            <div class="metric">✅</div>
+                            <p>validación de mercado</p>
+                        </div>
+                    </div>
+                    
+                    <div class="scene-narration">
+                        💬 "EcoMove transforma la experiencia de movilidad con tecnología e inteligencia"
+                    </div>
+                </div>
+                
+                <div class="scene">
+                    <div class="scene-header">
+                        <div class="scene-icon">🌱</div>
+                        <div class="scene-title">ESCENA 3: "El Impacto Crece"</div>
+                        <div class="scene-period">Meses 4-6</div>
+                    </div>
+                    
+                    <div class="scene-content">
+                        <div class="scene-image">
+                            <div>
+                                <strong>🏙️ Imagen Visual:</strong><br>
+                                Miles de usuarios usando la app, ciudad notablemente más verde y fluida
+                            </div>
+                        </div>
+                        
+                        <div class="scene-data">
+                            <h4>📊 Crecimiento Exponencial</h4>
+                            <div class="metric">10,000</div>
+                            <p>usuarios activos diarios</p>
+                            <div class="metric">30%</div>
+                            <p>menos emisiones CO₂</p>
+                            <div class="metric">🏆</div>
+                            <p>partnerships estratégicos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="scene-narration">
+                        💬 "La comunidad EcoMove demuestra que la movilidad sostenible es posible y deseable"
+                    </div>
+                </div>
+                
+                <div class="scene">
+                    <div class="scene-header">
+                        <div class="scene-icon">🚀</div>
+                        <div class="scene-title">ESCENA 4: "La Transformación"</div>
+                        <div class="scene-period">Meses 7-12</div>
+                    </div>
+                    
+                    <div class="scene-content">
+                        <div class="scene-image">
+                            <div>
+                                <strong>🌍 Imagen Visual:</strong><br>
+                                Múltiples ciudades conectadas, ecosistema completo funcionando en armonía
+                            </div>
+                        </div>
+                        
+                        <div class="scene-data">
+                            <h4>📊 Transformación Completa</h4>
+                            <div class="metric">50,000+</div>
+                            <p>usuarios en 3 ciudades</p>
+                            <div class="metric">🌐</div>
+                            <p>comunidad global activa</p>
+                            <div class="metric">💰</div>
+                            <p>modelo sostenible validado</p>
+                        </div>
+                    </div>
+                    
+                    <div class="scene-narration">
+                        💬 "EcoMove se convierte en el estándar de movilidad inteligente y sostenible"
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección Mercado -->
+        <div id="market" class="section">
+            <h2>📊 Cómo EcoMove Responde al Mercado</h2>
+            
+            <div class="market-response">
+                <div class="response-card">
+                    <h4><span class="icon">📈</span>Métricas de Respuesta</h4>
+                    
+                    <div class="metric-item">
+                        <span><strong>Adopción:</strong> Crecimiento exponencial</span>
+                        <span class="metric-value">📊 Exponencial</span>
+                    </div>
+                    
+                    <div class="metric-item">
+                        <span><strong>Retención:</strong> Usuarios activos mensuales</span>
+                        <span class="metric-value">70%</span>
+                    </div>
+                    
+                    <div class="metric-item">
+                        <span><strong>Impacto:</strong> Reducción emisiones y tiempos</span>
+                        <span class="metric-value">30-40%</span>
+                    </div>
+                    
+                    <div class="metric-item">
+                        <span><strong>Satisfacción:</strong> Net Promoter Score</span>
+                        <span class="metric-value">NPS 8+</span>
+                    </div>
+                </div>
+                
+                <div class="response-card">
+                    <h4><span class="icon">🎯</span>Validación del Mercado</h4>
+                    
+                    <div class="validation-grid">
+                        <div class="validation-item">
+                            <div class="icon">📊</div>
+                            <h5>Métricas Específicas</h5>
+                            <p>Cada hito incluye métricas que validan la demanda real</p>
+                        </div>
+                        
+                        <div class="validation-item">
+                            <div class="icon">👥</div>
+                            <h5>Feedback Continuo</h5>
+                            <p>Los usuarios guían activamente el desarrollo del producto</p>
+                        </div>
+                        
+                        <div class="validation-item">
+                            <div class="icon">🤝</div>
+                            <h5>Partnerships Estratégicos</h5>
+                            <p>Alianzas confirman la viabilidad comercial</p>
+                        </div>
+                        
+                        <div class="validation-item">
+                            <div class="icon">🌍</div>
+                            <h5>Impacto Ambiental</h5>
+                            <p>Datos reales generan credibilidad y confianza</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 40px; text-align: center;">
+                <div style="background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 30px; border-radius: 20px;">
+                    <h3 style="margin-bottom: 20px; font-size: 2rem;">🏆 Resultado Final</h3>
+                    <p style="font-size: 1.3rem; line-height: 1.8;">
+                        En 12 meses, EcoMove habrá transformado la movilidad urbana de <strong>50,000+ usuarios</strong> 
+                        en <strong>3 ciudades</strong>, estableciendo un <strong>nuevo estándar</strong> de transporte 
+                        inteligente y sostenible que combina <strong>eficiencia</strong>, <strong>tecnología</strong> 
+                        y <strong>consciencia ambiental</strong>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showSection(sectionId) {
+            // Ocultar todas las secciones
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remover clase active de todos los botones
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Mostrar la sección seleccionada
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Activar el botón correspondiente
+            event.target.classList.add('active');
+            
+            // Scroll suave hacia arriba
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+            
+            // Reiniciar animaciones
+            if (sectionId === 'roadmap') {
+                restartTimelineAnimations();
+            }
+        }
+        
+        function restartTimelineAnimations() {
+            const milestones = document.querySelectorAll('.milestone');
+            milestones.forEach(milestone => {
+                milestone.style.animation = 'none';
+                setTimeout(() => {
+                    milestone.style.animation = '';
+                }, 10);
+            });
+        }

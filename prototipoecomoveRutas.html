@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoMove - Rutas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 40px;
+            padding: 8px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #f8fafc;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            color: #1e293b;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            padding: 16px 20px;
+            color: white;
+            position: relative;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .filter-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .location-input {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            padding: 12px 16px;
+            border-radius: 12px;
+            width: 100%;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .location-input::placeholder {
+            color: #6b7280;
+        }
+
+        .swap-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #10b981;
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .quick-locations {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .quick-location {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .map-container {
+            height: 200px;
+            background: linear-gradient(45deg, #e5e7eb 25%, transparent 25%), 
+                        linear-gradient(-45deg, #e5e7eb 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #e5e7eb 75%), 
+                        linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            position: relative;
+            margin: 0 20px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .map-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #374151;
+        }
+
+        .route-line {
+            position: absolute;
+            top: 50%;
+            left: 20%;
+            right: 20%;
+            height: 4px;
+            background: linear-gradient(90deg, #10b981 0%, #3b82f6 50%, #ec4899 100%);
+            border-radius: 2px;
+            transform: translateY(-50%);
+        }
+
+        .route-points {
+            position: absolute;
+            top: 50%;
+            left: 20%;
+            right: 20%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+
+        .route-point {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border: 3px solid #10b981;
+            border-radius: 50%;
+        }
+
+        .route-point.end {
+            border-color: #ec4899;
+        }
+
+        .routes-list {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .routes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .routes-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .sort-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        .route-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .route-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .route-card.recommended {
+            border: 2px solid #10b981;
+            background: linear-gradient(135deg, #f0fdf4 0%, white 100%);
+        }
+
+        .route-card.recommended::before {
+            content: '⭐ Recomendada';
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border-bottom-left-radius: 8px;
+        }
+
+        .route-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .transport-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .transport-icon {
+            font-size: 24px;
+            padding: 8px;
+            border-radius: 12px;
+            background: #f1f5f9;
+        }
+
+        .transport-icon.bike { background: linear-gradient(135deg, #fef3c7 0%, #fbbf24 50%); }
+        .transport-icon.bus { background: linear-gradient(135deg, #dbeafe 0%, #3b82f6 50%); }
+        .transport-icon.walk { background: linear-gradient(135deg, #f3e8ff 0%, #8b5cf6 50%); }
+        .transport-icon.metro { background: linear-gradient(135deg, #fce7f3 0%, #ec4899 50%); }
+        .transport-icon.car { background: linear-gradient(135deg, #fee2e2 0%, #ef4444 50%); }
+
+        .transport-details h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .transport-subtitle {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .route-time {
+            text-align: right;
+        }
+
+        .time-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .time-label {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .route-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .eco-impact {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: #f0fdf4;
+            border-radius: 8px;
+        }
+
+        .eco-impact.negative {
+            background: #fef2f2;
+        }
+
+        .eco-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .eco-value.positive {
+            color: #059669;
+        }
+
+        .eco-value.negative {
+            color: #dc2626;
+        }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 12px 0 32px 0;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #6b7280;
+            text-decoration: none;
+            padding: 8px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active {
+            color: #059669;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        .nav-label {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .route-card {
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        .route-card:nth-child(2) { animation-delay: 0.1s; }
+        .route-card:nth-child(3) { animation-delay: 0.2s; }
+        .route-card:nth-child(4) { animation-delay: 0.3s; }
+        .route-card:nth-child(5) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 📶 🔋</span>
+            </div>
+            
+            <div class="header">
+                <div class="header-top">
+                    <button class="back-btn">←</button>
+                    <div class="page-title">Rutas</div>
+                    <button class="filter-btn">🔍</button>
+                </div>
+                
+                <div class="search-container">
+                    <input type="text" class="location-input" placeholder="📍 Desde: Tu ubicación" readonly>
+                    <input type="text" class="location-input" placeholder="📍 Hasta: Plaza de Armas" readonly>
+                    <button class="swap-btn">⇅</button>
+                </div>
+                
+                <div class="quick-locations">
+                    <button class="quick-location">🏠 Casa</button>
+                    <button class="quick-location">💼 Trabajo</button>
+                    <button class="quick-location">🎓 Universidad</button>
+                </div>
+            </div>
+
+            <div class="map-container">
+                <div class="map-overlay">
+                    <div class="route-line"></div>
+                    <div class="route-points">
+                        <div class="route-point"></div>
+                        <div class="route-point end"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="routes-list">
+                <div class="routes-header">
+                    <div class="routes-title">Opciones de Ruta</div>
+                    <button class="sort-btn">Ordenar</button>
+                </div>
+
+                <div class="route-card recommended">
+                    <div class="route-header">
+                        <div class="transport-info">
+                            <div class="transport-icon bike">🚲</div>
+                            <div class="transport-details">
+                                <h3>Bicicleta</h3>
+                                <div class="transport-subtitle">Vía Ciclovía Errazuriz</div>
+                            </div>
+                        </div>
+                        <div class="route-time">
+                            <div class="time-value">22 min</div>
+                            <div class="time-label">5.2 km</div>
+                        </div>
+                    </div>
+                    <div class="route-stats">
+                        <div class="stat">
+                            <div class="stat-value">$0</div>
+                            <div class="stat-label">Costo</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">280</div>
+                            <div class="stat-label">Calorías</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">+50</div>
+                            <div class="stat-label">EcoPoints</div>
+                        </div>
+                    </div>
+                    <div class="eco-impact">
+                        <span>🌱</span>
+                        <span class="eco-value positive">-1.2kg CO₂ vs auto</span>
+                    </div>
+                </div>
+
+                <div class="route-card">
+                    <div class="route-header">
+                        <div class="transport-info">
+                            <div class="transport-icon bus">🚌</div>
+                            <div class="transport-details">
+                                <h3>Transporte Público</h3>
+                                <div class="transport-subtitle">Línea 210 → Metro L1</div>
+                            </div>
+                        </div>
+                        <div class="route-time">
+                            <div class="time-value">35 min</div>
+                            <div class="time-label">4.8 km</div>
+                        </div>
+                    </div>
+                    <div class="route-stats">
+                        <div class="stat">
+                            <div class="stat-value">$850</div>
+                            <div class="stat-label">Costo</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">85</div>
+                            <div class="stat-label">Calorías</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">+30</div>
+                            <div class="stat-label">EcoPoints</div>
+                        </div>
+                    </div>
+                    <div class="eco-impact">
+                        <span>🌿</span>
+                        <span class="eco-value positive">-0.8kg CO₂ vs auto</span>
+                    </div>
+                </div>
+
+                <div class="route-card">
+                    <div class="route-header">
+                        <div class="transport-info">
+                            <div class="transport-icon walk">🚶‍♀️</div>
+                            <div class="transport-details">
+                                <h3>Caminar</h3>
+                                <div class="transport-subtitle">Vía Av. Brasil</div>
+                            </div>
+                        </div>
+                        <div class="route-time">
+                            <div class="time-value">65 min</div>
+                            <div class="time-label">5.2 km</div>
+                        </div>
+                    </div>
+                    <div class="route-stats">
+                        <div class="stat">
+                            <div class="stat-value">$0</div>
+                            <div class="stat-label">Costo</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">350</div>
+                            <div class="stat-label">Calorías</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">+40</div>
+                            <div class="stat-label">EcoPoints</div>
+                        </div>
+                    </div>
+                    <div class="eco-impact">
+                        <span>🌱</span>
+                        <span class="eco-value positive">-1.2kg CO₂ vs auto</span>
+                    </div>
+                </div>
+
+                <div class="route-card">
+                    <div class="route-header">
+                        <div class="transport-info">
+                            <div class="transport-icon car">🚗</div>
+                            <div class="transport-details">
+                                <h3>Auto Privado</h3>
+                                <div class="transport-subtitle">Vía Ruta más rápida</div>
+                            </div>
+                        </div>
+                        <div class="route-time">
+                            <div class="time-value">18 min</div>
+                            <div class="time-label">4.5 km</div>
+                        </div>
+                    </div>
+                    <div class="route-stats">
+                        <div class="stat">
+                            <div class="stat-value">$2.500</div>
+                            <div class="stat-label">Costo</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">0</div>
+                            <div class="stat-label">Calorías</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">-10</div>
+                            <div class="stat-label">EcoPoints</div>
+                        </div>
+                    </div>
+                    <div class="eco-impact negative">
+                        <span>🏭</span>
+                        <span class="eco-value negative">+1.2kg CO₂</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-nav">
+                <div class="nav-items">
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">🏠</span>
+                        <span class="nav-label">Inicio</span>
+                    </a>
+                    <a href="#" class="nav-item active">
+                        <span class="nav-icon">🗺️</span>
+                        <span class="nav-label">Rutas</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">🏆</span>
+                        <span class="nav-label">Logros</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">👤</span>
+                        <span class="nav-label">Perfil</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Funcionalidad del botón de intercambio
+        document.querySelector('.swap-btn').addEventListener('click', function() {
+            const inputs = document.querySelectorAll('.location-input');
+            const temp = inputs[0].placeholder;
+            inputs[0].placeholder = inputs[1].placeholder;
+            inputs[1].placeholder = temp;
+            
+            this.style.transform = 'translateY(-50%) rotate(180deg)';
+            setTimeout(() => {
+                this.style.transform = 'translateY(-50%) rotate(0deg)';
+            }, 300);
+        });
+
+        // Selección de ubicaciones rápidas
+        document.querySelectorAll('.quick-location').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const destination = document.querySelectorAll('.location-input')[1];
+                destination.placeholder = `📍 Hasta: ${this.textContent}`;
+                this.style.background = 'rgba(255,255,255,0.4)';
+                setTimeout(() => {
+                    this.style.background = 'rgba(255,255,255,0.2)';
+                }, 200);
+            });
+        });
+
+        // Selección de rutas
+        document.querySelectorAll('.route-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Remover selección anterior
+                document.querySelectorAll('.route-card').forEach(c => c.classList.remove('selected'));
+                
+                // Seleccionar tarjeta actual
+                this.classList.add('selected');
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+                
+                // Simular navegación
+                const transportType = this.querySelector('h3').textContent;
+                const time = this.querySelector('.time-value').textContent;
+                setTimeout(() => {
+                    alert(`Iniciando navegación en ${transportType} - Tiempo estimado: ${time}`);
+                }, 300);
+            });
+        });
+
+        // Funcionalidad del botón de ordenar
+        document.querySelector('.sort-btn').addEventListener('click', function() {
+            const options = ['Tiempo', 'Costo', 'Eco-amigable', 'Distancia'];
+            const currentOption = options[Math.floor(Math.random() * options.length)];
+            this.textContent = `Por ${currentOption}`;
+            
+            // Simular reordenamiento con animación
+            const routesList = document.querySelector('.routes-list');
+            routesList.style.opacity = '0.7';
+            setTimeout(() => {
+                routesList.style.opacity = '1';
+            }, 300);
+        });
+
+        // Animación de actualización de tiempo en tiempo real
+        function updateTimes() {
+            const timeElements = document.querySelectorAll('.time-value');
+            timeElements.forEach(elem => {
+                if (elem.textContent.includes('min')) {
+                    const currentTime = parseInt(elem.textContent);
+                    const variation = Math.floor(Math.random() * 3) - 1; // -1, 0, o 1
+                    const newTime = Math.max(1, currentTime + variation);
+                    elem.textContent = `${newTime} min`;
+                }
+            });
+        }
+
+        // Actualizar tiempos cada 10 segundos
+        setInterval(updateTimes, 10000);
+
+        // Animación de entrada
+        document.querySelectorAll('.route-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    </script>
+</body>
+</html>

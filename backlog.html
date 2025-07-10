@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoMove - Product Backlog & Sprint Board</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background-color: #f4f5f7;
+            color: #172b4d;
+            line-height: 1.4;
+        }
+
+        .jira-header {
+            background: #0052cc;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .project-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .project-avatar {
+            width: 32px;
+            height: 32px;
+            background: #36b37e;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .breadcrumbs {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .main-container {
+            padding: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .board-header {
+            margin-bottom: 24px;
+        }
+
+        .board-title {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .board-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 1px solid #dfe1e6;
+            border-radius: 3px;
+            padding: 6px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: #f4f5f7;
+        }
+
+        .filter-btn.active {
+            background: #0052cc;
+            color: white;
+            border-color: #0052cc;
+        }
+
+        /* Product Backlog Section */
+        .backlog-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 32px;
+        }
+
+        .section-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #dfe1e6;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f4f5f7;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .issue-count {
+            background: #dfe1e6;
+            color: #5e6c84;
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .backlog-content {
+            padding: 16px 20px;
+        }
+
+        /* Issue Cards */
+        .issue-card {
+            background: white;
+            border: 1px solid #dfe1e6;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .issue-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+            transform: translateY(-1px);
+        }
+
+        .issue-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .issue-type {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .story {
+            background: #36b37e;
+        }
+
+        .epic {
+            background: #6554c0;
+        }
+
+        .task {
+            background: #0052cc;
+        }
+
+        .issue-key {
+            font-size: 12px;
+            color: #5e6c84;
+            font-weight: 500;
+        }
+
+        .issue-summary {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .issue-description {
+            font-size: 13px;
+            color: #5e6c84;
+            margin-bottom: 12px;
+        }
+
+        .issue-labels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .label {
+            background: #dfe1e6;
+            color: #172b4d;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .label.priority-high {
+            background: #ffebe6;
+            color: #de350b;
+        }
+
+        .label.priority-medium {
+            background: #fff4e6;
+            color: #ff8b00;
+        }
+
+        .label.eco-friendly {
+            background: #e3fcef;
+            color: #006644;
+        }
+
+        .issue-footer {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .story-points {
+            background: #dfe1e6;
+            color: #5e6c84;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .assignee {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #0052cc;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+        /* Sprint Board */
+        .sprint-board {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .sprint-header {
+            background: #0052cc;
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sprint-info h3 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .sprint-dates {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .sprint-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        .board-columns {
+            display: flex;
+            min-height: 600px;
+        }
+
+        .board-column {
+            flex: 1;
+            background: #f4f5f7;
+            border-right: 1px solid #dfe1e6;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .board-column:last-child {
+            border-right: none;
+        }
+
+        .column-header {
+            padding: 16px;
+            background: #f4f5f7;
+            border-bottom: 1px solid #dfe1e6;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .column-content {
+            padding: 12px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .kanban-card {
+            background: white;
+            border-radius: 6px;
+            padding: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .kanban-card:hover {
+            box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.3;
+            margin-bottom: 6px;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .card-priority {
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+        }
+
+        .priority-highest {
+            background: #de350b;
+        }
+
+        .priority-high {
+            background: #ff5630;
+        }
+
+        .priority-medium {
+            background: #ff8b00;
+        }
+
+        .priority-low {
+            background: #36b37e;
+        }
+
+        /* Team Section */
+        .team-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 32px;
+        }
+
+        .team-grid {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .team-member {
+            background: #f8f9fb;
+            border: 1px solid #dfe1e6;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+
+        .team-member:hover {
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .member-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .member-avatar.po {
+            background: linear-gradient(135deg, #6554c0, #5243aa);
+        }
+
+        .member-avatar.dt {
+            background: linear-gradient(135deg, #0052cc, #0747a6);
+        }
+
+        .member-avatar.es {
+            background: linear-gradient(135deg, #36b37e, #00875a);
+        }
+
+        .member-avatar.ux {
+            background: linear-gradient(135deg, #ff5630, #de350b);
+        }
+
+        .member-avatar.be {
+            background: linear-gradient(135deg, #ff8b00, #ff7701);
+        }
+
+        .member-avatar.dv {
+            background: linear-gradient(135deg, #00b8d9, #0065ff);
+        }
+
+        .member-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #172b4d;
+            margin-bottom: 8px;
+        }
+
+        .member-info p {
+            font-size: 13px;
+            color: #5e6c84;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+        .member-responsibility {
+            background: #e3fcef;
+            color: #006644;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .board-columns {
+                flex-direction: column;
+            }
+            
+            .board-column {
+                border-right: none;
+                border-bottom: 1px solid #dfe1e6;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 16px;
+            }
+            
+            .jira-header {
+                padding: 12px 16px;
+            }
+            
+            .board-filters {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Jira-style Header -->
+    <div class="jira-header">
+        <div class="project-title">
+            <div class="project-avatar">EM</div>
+            <span>EcoMove</span>
+        </div>
+        <div class="breadcrumbs">Proyectos / EcoMove / Backlog</div>
+    </div>
+
+            <div class="main-container">
+        <!-- Board Header -->
+        <div class="board-header">
+            <h1 class="board-title">EcoMove Backlog</h1>
+            <div class="board-filters">
+                <button class="filter-btn active">Todos los elementos</button>
+                <button class="filter-btn">Solo mis elementos</button>
+                <button class="filter-btn">Sprint actual</button>
+                <button class="filter-btn">Elementos recientes</button>
+            </div>
+        </div>
+
+        <!-- Team Members Section -->
+        <div class="team-section">
+            <div class="section-header">
+                <div class="section-title">
+                    👥 Equipo del Proyecto
+                    <span class="issue-count">6</span>
+                </div>
+            </div>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-avatar po">PO</div>
+                    <div class="member-info">
+                        <h4>Product Owner</h4>
+                        <p>Define la visión del producto, gestiona el backlog y prioriza funcionalidades según el valor de negocio.</p>
+                        <div class="member-responsibility">Responsable de historias de usuario y criterios de aceptación</div>
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-avatar dt">DT</div>
+                    <div class="member-info">
+                        <h4>Data Engineer / Tech Lead</h4>
+                        <p>Lidera la arquitectura técnica, integración de APIs de transporte y algoritmos de optimización de rutas.</p>
+                        <div class="member-responsibility">Especialista en datos de transporte y sistemas en tiempo real</div>
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-avatar es">ES</div>
+                    <div class="member-info">
+                        <h4>Environmental Specialist</h4>
+                        <p>Especialista en sostenibilidad que define métricas de huella de carbono y criterios de transporte ecológico.</p>
+                        <div class="member-responsibility">Cálculos de impacto ambiental y rutas sostenibles</div>
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-avatar ux">UX</div>
+                    <div class="member-info">
+                        <h4>UX/UI Designer</h4>
+                        <p>Diseña la experiencia de usuario, wireframes y interfaces intuitivas para la planificación de rutas.</p>
+                        <div class="member-responsibility">Research de usuarios y design thinking</div>
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-avatar be">BE</div>
+                    <div class="member-info">
+                        <h4>Backend Developer</h4>
+                        <p>Desarrolla APIs, servicios backend, base de datos y lógica de negocio para el procesamiento de rutas.</p>
+                        <div class="member-responsibility">Arquitectura de datos y servicios REST</div>
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-avatar dv">DV</div>
+                    <div class="member-info">
+                        <h4>DevOps Engineer</h4>
+                        <p>Gestiona infraestructura, CI/CD, deployments y ambientes de desarrollo y producción.</p>
+                        <div class="member-responsibility">Automatización y monitoreo de sistemas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Backlog Section -->
+        <div class="backlog-section">
+            <div class="section-header">
+                <div class="section-title">
+                    📋 Product Backlog
+                    <span class="issue-count">4</span>
+                </div>
+            </div>
+            <div class="backlog-content">
+                <!-- Epic: General Backlog Elements -->
+                <div class="issue-card">
+                    <div class="issue-header">
+                        <div class="issue-type epic">E</div>
+                        <span class="issue-key">EM-001</span>
+                    </div>
+                    <div class="issue-summary">Epic: Elementos Generales del Product Backlog</div>
+                    <div class="issue-description">
+                        Configuración y gestión de elementos básicos del backlog: prioridades, estimaciones, estados, dependencias y definición de "Hecho".
+                    </div>
+                    <div class="issue-labels">
+                        <span class="label">setup</span>
+                        <span class="label">management</span>
+                        <span class="label priority-medium">Prioridad: Media</span>
+                    </div>
+                    <div class="issue-footer">
+                        <div class="story-points">5</div>
+                        <div class="assignee">PO</div>
+                    </div>
+                </div>
+
+                <!-- User Story 1 -->
+                <div class="issue-card">
+                    <div class="issue-header">
+                        <div class="issue-type story">S</div>
+                        <span class="issue-key">EM-002</span>
+                    </div>
+                    <div class="issue-summary">Historia de Usuario: Menos Tiempo y Más Relajación al Commutar</div>
+                    <div class="issue-description">
+                        Como usuario, quiero reducir mi tiempo de viaje y llegar relajado y a tiempo, para optimizar mi rutina diaria y reducir el estrés del transporte.
+                    </div>
+                    <div class="issue-labels">
+                        <span class="label">optimización</span>
+                        <span class="label">tiempo-real</span>
+                        <span class="label priority-high">Prioridad: Alta</span>
+                    </div>
+                    <div class="issue-footer">
+                        <div class="story-points">13</div>
+                        <div class="assignee">BE</div>
+                    </div>
+                </div>
+
+                <!-- User Story 2 -->
+                <div class="issue-card">
+                    <div class="issue-header">
+                        <div class="issue-type story">S</div>
+                        <span class="issue-key">EM-003</span>
+                    </div>
+                    <div class="issue-summary">Historia de Usuario: Commutar de Forma Ecológica y Puntual</div>
+                    <div class="issue-description">
+                        Como usuario consciente del medio ambiente, quiero opciones de transporte sostenible que me permitan llegar a tiempo y minimizar mi huella de carbono.
+                    </div>
+                    <div class="issue-labels">
+                        <span class="label eco-friendly">sostenible</span>
+                        <span class="label">huella-carbono</span>
+                        <span class="label priority-high">Prioridad: Alta</span>
+                    </div>
+                    <div class="issue-footer">
+                        <div class="story-points">21</div>
+                        <div class="assignee">ES</div>
+                    </div>
+                </div>
+
+                <!-- Design Thinking Increment -->
+                <div class="issue-card">
+                    <div class="issue-header">
+                        <div class="issue-type epic">E</div>
+                        <span class="issue-key">EM-004</span>
+                    </div>
+                    <div class="issue-summary">Epic: Incremento según Design Thinking</div>
+                    <div class="issue-description">
+                        Implementar metodología de Design Thinking para abordar frustraciones de viajeros y crear soluciones centradas en el usuario.
+                    </div>
+                    <div class="issue-labels">
+                        <span class="label">design-thinking</span>
+                        <span class="label">investigación-usuario</span>
+                        <span class="label priority-medium">Prioridad: Media</span>
+                    </div>
+                    <div class="issue-footer">
+                        <div class="story-points">8</div>
+                        <div class="assignee">UX</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sprint Board -->
+        <div class="sprint-board">
+            <div class="sprint-header">
+                <div class="sprint-info">
+                    <h3>🚀 Sprint 1: Rutas Ecológicas Esenciales para Valparaíso</h3>
+                    <div class="sprint-dates">23 junio - 4 julio 2025 • 2 semanas</div>
+                </div>
+                <div class="sprint-stats">
+                    <div>📊 Story Points: 34</div>
+                    <div>🎯 Elementos: 8</div>
+                    <div>👥 Asignados: 4</div>
+                </div>
+            </div>
+
+            <div class="board-columns">
+                <!-- To Do Column -->
+                <div class="board-column">
+                    <div class="column-header">
+                        📝 Por Hacer
+                        <span class="issue-count">3</span>
+                    </div>
+                    <div class="column-content">
+                        <div class="kanban-card">
+                            <div class="card-header">
+                                <div class="issue-type task">T</div>
+                                <span class="issue-key">EM-101</span>
+                            </div>
+                            <div class="card-title">Investigación APIs transporte público (Merval, buses)</div>
+                            <div class="card-footer">
+                                <div class="card-priority priority-high"></div>
+                                <div class="story-points">5</div>
+                                <div class="assignee">DA</div>
+                            </div>
+                        </div>
+
+                        <div class="kanban-card">
+                            <div class="card-header">
+                                <div class="issue-type task">T</div>
+                                <span class="issue-key">EM-102</span>
+                            </div>
+                            <div class="card-title">APIs sistemas de bicicletas compartidas</div>
+                            <div class="card-footer">
+                                <div class="card-priority priority-medium"></div>
+                                <div class="story-points">3</div>
+                                <div class="assignee">DA</div>
+                            </div>
+                        </div>
+
+                        <div class="kanban-card">
+                            <div class="card-header">
+                                <div class="issue-type task">T</div>
+                                <span class="issue-key">EM-103</span>
+                            </div>
+                            <div class="card-title">Diseñar wireframes/mockups iniciales</div>
+                            <div class="card-footer">
+                                <div class="card-priority priority-medium"></div>
+                                <div class="story-points">5</div>
+                                <div class="assignee">UX</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- In Progress Column -->
+                <div class="board-column">
+                    <div class="column-header">
+                        🔄 En Progreso
+                        <span class="issue-count">2</span>
+                    </div>
+                    <div class="column-content">
+                        <div class="kanban-card">
+                            <div class="card-header">
+                                <div class="issue-type task">T</div>
+                                <span class="issue-key">EM-104</span>
+                            </div>
+                            <div class="card-title">Diseño esquema de base de datos</div>
+                            <div class="card-footer">
+                                <div class="card-priority priority-high"></div>
+                                <div class="story-points">8</div>
+                                <div class="assignee">BE</div>
+                            </div>
+                        </div>
+
+                        <div class="kanban-card">
+                            <div class="card-header">
+                                <div class="issue-type task">T</div>
+                                <span class="issue-key">EM-105</span>
+                            </div>
+                            <div class="card-title">Investigar factores de emisión promedio</div>
+                            <div class="card-footer">
+                                <div class="card-priority priority-medium"></div>
+                                <div class="story-points">3</div>
+                                <div class="assignee">ES</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code Review Column -->
+                <div class="board-column">
+                    <div class="column-header">
+                        👀 Code Review
+                        <span class="issue-count">1</span>
+                    </div>
+                    <div class="column-content">
+                        <div class="kanban-card">
+                            <div class="card-header">
+                                <div class="issue-type task">T</div>
+                                <span class="issue-key">EM-106</span>
+                            </div>
+                            <div class="card-title">Configurar entorno dev/staging</div>
+                            <div class="card-footer">
+                                <div class="card-priority priority-low"></div>
+                                <div class="story-points">2</div>
+                                <div class="assignee">DV</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Done Column -->
+                <div class="board-column">
+                    <div class="column-header">
+                        ✅ Hecho
+                        <span class="issue-count">2</span>
+                    </div>
+                    <div class="column-content">
+                        <div class="kanban-card">
+                            <div class="card-header">
+                                <div class="issue-type task">T</div>
+                                <span class="issue-key">EM-107</span>
+                            </div>
+                            <div class="card-title">Obtener claves API</div>
+                            <div class="card-footer">
+                                <div class="card-priority priority-low"></div>
+                                <div class="story-points">1</div>
+                                <div class="assignee">DA</div>
+                            </div>
+                        </div>
+
+                        <div class="kanban-card">
+                            <div class="card-header">
+                                <div class="issue-type task">T</div>
+                                <span class="issue-key">EM-108</span>
+                            </div>
+                            <div class="card-title">Configurar CI/CD básico</div>
+                            <div class="card-footer">
+                                <div class="card-priority priority-medium"></div>
+                                <div class="story-points">3</div>
+                                <div class="assignee">DV</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
